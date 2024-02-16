@@ -1,6 +1,6 @@
 ![enter image description here](https://pic1.zhimg.com/70/v2-ef986913dfbdc5aa12325a37b592981a_1440w.avis?source=172ae18b&biz_tag=Post)
 # ICCV 2023 | RiFT：通过鲁棒关键微调提升对抗练的泛化性
-对抗训练（Adversarail Training）增强了模型对抗鲁棒性，但其代价往往是泛化能力的下降。本文提出了**「鲁棒关键微调」**（Robustness Critical Fine-Tuning，RiFT），通过**「微调」**对抗训练模型的**「非鲁棒关键性模块」**，充分利用其冗余能力提升泛化性。在 CIFAR10、CIFAR100 和 Tiny-ImageNet 数据集上的实验表明RiFT可以提高模型泛化性约 1.5%，同时保持对抗鲁棒性，达到了对抗鲁棒性和泛化能力更好的 trade-off。
+对抗训练（Adversarail Training）增强了模型对抗鲁棒性，但其代价往往是泛化能力的下降。本文提出了 **「鲁棒关键微调」**（Robustness Critical Fine-Tuning，RiFT），通过 **「微调」** 对抗训练模型的 **「非鲁棒关键性模块」**，充分利用其冗余能力提升泛化性。在 CIFAR10、CIFAR100 和 Tiny-ImageNet 数据集上的实验表明RiFT可以提高模型泛化性约 1.5%，同时保持对抗鲁棒性，达到了对抗鲁棒性和泛化能力更好的 trade-off。
 ![enter image description here](https://pic4.zhimg.com/80/v2-38bf86cefde796591a52a962bbd57da7_1440w.webp)
 
  - 论文标题：Improving Generalization of Adversarial Training via Robust Critical Fine-Tuning
@@ -11,8 +11,8 @@
 
  - [ **[背景]** ](#背景) 
  - [ **对抗鲁棒性和泛化性是否相互矛盾？** ](#对抗鲁棒性和泛化性是否相互矛盾？)
- - [ **模型鲁棒关键性(Module Robust Criticality)** ](#模型鲁棒关键性(Module Robust Criticality))
- - [ **RiFT: Robust Critical Fine-Tuning** ](#RiFT: Robust Critical Fine-Tuning)
+ - [ **模型鲁棒关键性(Module Robust Criticality)** ] (#模型鲁棒关键性(Module Robust Criticality))
+ - [ **RiFT: Robust Critical Fine-Tuning** ] (#RiFT: Robust Critical Fine-Tuning)
  - [ **实验结果** ](#实验结果)
  - [ **参考文献** ](#参考文献)
  #
@@ -32,11 +32,11 @@
 
 $\arg \min _{\theta} \mathcal{R}(f(\theta), \mathcal{D})$
 
-其中$D=[(x_1,y_1),\ldots,(x_2,y_2)]$为数据集。鲁棒损失$R$的定义如下所示：
+其中 $D=[(x_1,y_1),\ldots,(x_2,y_2)]$ 为数据集。鲁棒损失 $R$ 的定义如下所示：
 
 $\mathcal{R}(f(\theta), \mathcal{D})=\sum_{(x, y) \in \mathcal{D}} \max _{\Delta x \in \mathcal{S}} \mathcal{L}(f(\theta, x+\Delta x), y)$
 
-$R$衡量了模型在面对对抗样本时的损失值。
+ $R$ 衡量了模型在面对对抗样本时的损失值。
 #
 ## 对抗鲁棒性和泛化性是否相互矛盾？
 泛化性与鲁棒性二者是否可以兼得，目前仍处于争议中。有研究表明[3]，即使在线性分类这样简单的问题，泛化性与鲁棒性都不可兼得。 下面的表格数据从[RobustBench](https://link.zhihu.com/?target=https%3A//robustbench.github.io/)的摘取：可以看出，对抗训练极大的提升了模型的对抗鲁棒性，但代价是降低了模型的分布内泛化性。
@@ -57,13 +57,13 @@ $R$衡量了模型在面对对抗样本时的损失值。
  ![enter image description here](https://pic2.zhimg.com/80/v2-a331f0d92ce7e5bca1721772c150f579_1440w.webp)
  可以看到，不同的局部极小值，同样的扰动范围，鲁棒损失变化大不相同。**「平坦的局部极小意味着对参数进行微小改动不会影响模型鲁棒性。」**
  
- **「Module Robust Criticality」** ：给定一个权重扰动范围$\xi$ $\geq$ 0以及一个神经网络$f(\theta)$，对于神经网络中的第i层模块而言，其鲁棒关键性(MRC)定义为：![image.png](https://s2.loli.net/2024/02/03/orKSfV9E6lJkbY2.png)
- 其中$R$是我们之前提到过的鲁棒损失。
+ **「Module Robust Criticality」** ：给定一个权重扰动范围 $\xi$  $\geq$ 0以及一个神经网络 $f(\theta)$ ，对于神经网络中的第i层模块而言，其鲁棒关键性(MRC)定义为:  $\operatorname{MRC}\left(f, \theta^{(i)}, \mathcal{D}, \epsilon\right)=\max_{\Delta \theta \in \mathcal{C}_{\theta}} \mathcal{R}(f(\theta+\Delta \theta), \mathcal{D})-\mathcal{R}(f(\theta), \mathcal{D})$ 
+其中 $R$ 是我们之前提到过的鲁棒损失。
 
 接下来我们使用对抗训练后的模型ResNet18在CIFAR10上测试一下：![enter image description here](https://pic3.zhimg.com/80/v2-0b541b22e86d1994f8631b47dbfebad6_1440w.webp)
 可以看出，不同模块对模型鲁棒性的关键程度是不同的。例如，layer2.1.conv2模块在最坏扰动（Worst-case weight perturbation)下对模型鲁棒性的影响极小，鲁棒准确率只下降了2.86%，表明该模块存在 **「冗余」** 的鲁棒能力。相反，对于layer4.1.conv1模块，最坏情况下的权重扰动会产生很大影响，导致鲁棒性准确性下降了53.03%之多。
 
-基于MRC的定义，我们可以证明，模型在$\xi$范围内进行微调，其鲁棒损失值不会超过MRC值。从直观上来说很容易理解，因为MRC就是在求$\xi$参数范围鲁棒损失的变化最大值，即求一个最坏情况下的权重扰动。因此，微调所造成的鲁棒损失上升值（通常不太可能和最坏情况下的权重扰动方向一致）一定不会超过MRC的值。
+基于MRC的定义，我们可以证明，模型在 $\xi$ 范围内进行微调，其鲁棒损失值不会超过MRC值。从直观上来说很容易理解，因为MRC就是在求 $\xi$ 参数范围鲁棒损失的变化最大值，即求一个最坏情况下的权重扰动。因此，微调所造成的鲁棒损失上升值（通常不太可能和最坏情况下的权重扰动方向一致）一定不会超过MRC的值。
 
 需要注意的是，MRC求解需要同时找到最坏情况下的输入扰动（即对抗样本）和最坏情况下的权重扰动，这样的求解是十分复杂且费时的，本文在求解MRC时做了松弛处理，固定了对抗样本，具体请参见论文。
 #
